@@ -1,0 +1,1262 @@
+
+
+#include<iostream>
+
+#include <math.h>
+#include <CkMailMan.h>
+#include <CkEmail.h>
+#include <CkRsa.h>
+# define MAX_INPUT 100
+void ChilkatSample(void)
+    {
+    //  The mailman object is used for sending (SMTP) and receiving (POP3) email.
+    CkMailMan mailman;
+
+   bool success = mailman.UnlockComponent("SCOTTGMAILQ_ZpcR8r2N6R7a");
+    if (success != true) {
+        printf(mailman.lastErrorText() );
+        return;
+    }
+
+CkRsa rsa;
+ success = rsa.UnlockComponent("s/n: VIENTORSA_TbpfVVr01Or6");
+    if (success != true) {
+        printf("RSA component unlock failed \r\n");
+        return;
+    }
+    success = rsa.GenerateKey(1024);
+    if (success != true) {
+        printf(rsa.lastErrorText() ,"\r\n");
+        return;
+    }
+
+ //const char *publicKey = "<RSAPublicKey><Modulus>2qav2y5IxqjvyPQ+S3B4lRXvDIR4pI39uPx/wap+Z0Lm/CqN+8tAxcNjHPjra7Q5mt79uKSPdJjVMDt/ENRkGI3mwVjTSWFAk/9VwxDG5wF4yU13yAGJjUfjIJ27Hha65U966AYOdASSw4w6AU+DKo9VdisSdgj4yzl5m/CJRik=</Modulus><Exponent>AQAB</Exponent></RSAPublicKey>";
+    const char *privateKey = "<RSAKeyValue><Modulus>2qav2y5IxqjvyPQ+S3B4lRXvDIR4pI39uPx/wap+Z0Lm/CqN+8tAxcNjHPjra7Q5mt79uKSPdJjVMDt/ENRkGI3mwVjTSWFAk/9VwxDG5wF4yU13yAGJjUfjIJ27Hha65U966AYOdASSw4w6AU+DKo9VdisSdgj4yzl5m/CJRik=</Modulus><Exponent>AQAB</Exponent><D>WNKD99b6i3FPT2Qg9kZvRakOXhhmZfqkioRQZd0b0lj0OpYS7amo222/EqLwB+XDzO0vRtXazPPVDu3sdWrCahKI5/XuiGhDXGnNyp6octNBlsHlvkS4Pe4JrKuI9yYmCIGy/tt56PyClLB7mRSy3db4dmKqed1VNDq/YtrFooE=</D><P>+/OBoxDz+/N7bNexizRwwjcHZEvZhOg/K3qetnER4vz4NkFY+O4vPaZd9ju61U0gMyaFG5vp3fjR5pjtaIp6kQ==</P><Q>3iowP9sP4DY7nEULAfEHMpuxguTK7tdNCARcvJHrNZsIsE13uAxUrW03kHiXfy7VReuFsJODwYsZRv8NV0luGQ==</Q><DP>wMJAQF3MDMrvdwpejz4DttMbGKTfOkvlaIJbwwEmyh74V6oPRAQWqHgME0MHYgGrzPZ/h+v1NRoUnPQLTpwDwQ==</DP><DQ>M9XOGigHhT3CHMzzK4nMLx+qhCrTunRbkcJKzOiS45f/p/r7MuMVor032Kp6Vn9b3Yt9TtysQi0tQaZiu3nziQ==</DQ><InverseQ>17jYRnoDs/h5GM46kdkn84hvbmi9qHavAiVlj1tWgC7wHCGfXmuIWQgVKi2qDGo+CXtU3KpZ39R9eXZyyeo2kw==</InverseQ></RSAKeyValue>";
+
+
+    const char *plainText = "8ABF6F08A70962A4BBCA4ECC3516175F0100C449E139CA454197877271A03A6C557F1238B1BE11822B10C1D4935C0BF29BACBDB00B3C6BE32F6764D7D810B8C399CAB53ADB997237DAB0AD6A42ED3E6E7A18E45E270D3F54AE1C3B2CDF69B3A8DDCE5EBED68FC049EFF88BB2CAC9B4A5B29D6AA3755118CACC3942AB15A51A18";
+
+
+    CkRsa rsaDecryptor;
+  rsaDecryptor.put_EncodingMode("hex");
+    success = rsaDecryptor.ImportPrivateKey(privateKey);
+
+    bool usePrivateKey = true;
+    const char *decryptedStr = rsaDecryptor.decryptStringENC(plainText,usePrivateKey);
+    //  Set the SMTP server.
+    mailman.put_SmtpHost("smtp.gmail.com");
+
+    //  Set the SMTP login/password (if required)
+    mailman.put_SmtpUsername("tls.rrr.pfe@gmail.com");
+    mailman.put_SmtpPassword(decryptedStr);
+
+    //  Connect to SMTP port 465 using TLS.
+    mailman.put_SmtpSsl(true);
+    mailman.put_SmtpPort(465);
+
+    //  Create a new email object
+    CkEmail email;
+
+    email.put_Subject("TLS");
+    email.put_Body("<html><head><meta charset='utf-8'></head><body><p >Salam<br><b>Urgent!! alarme majeur!!<br>Cordialement.</p></body></html>");
+    email.put_From("FROM <ENNA>");
+    char a[100];
+
+
+
+    success = email.AddTo("ENNA","benbabarym@gmail.com");
+ success = mailman.SendEmail(email);
+    if (success != true) {
+        printf(  mailman.lastErrorText() );
+        return;
+    }
+
+
+
+
+
+    success = mailman.SendEmail(email);
+    if (success != true) {
+        printf( mailman.lastErrorText() );
+        return;
+    }
+
+    success = mailman.CloseSmtpConnection();
+    if (success != true) {
+        printf("La connection de serveur SMTP n'est pas bien ferm%Ce . \r\n", 130);
+    }
+
+    printf("e-mail envoy%C! \r\n",130) ;
+
+    }
+
+/* 4 bytes IP address */
+typedef struct ip_address{
+    u_char byte1;
+    u_char byte2;
+    u_char byte3;
+    u_char byte4;
+}ip_address;
+
+/* IPv4 header */
+typedef struct ip_header{
+    u_char  ver_ihl;        // Version (4 bits) + Internet header length (4 bits)
+    u_char  tos;            // Type of service
+    u_short tlen;           // Total length
+    u_short identification; // Identification
+    u_short flags_fo;       // Flags (3 bits) + Fragment offset (13 bits)
+    u_char  ttl;            // Time to live
+    u_char  proto;          // Protocol
+    u_short crc;            // Header checksum
+    ip_address  saddr;      // Source address
+    ip_address  daddr;      // Destination address
+    u_int   op_pad;         // Option + Padding
+}ip_header;
+
+/* UDP header*/
+typedef struct udp_header{
+    u_short sport;          // Source port
+    u_short dport;          // Destination port
+    u_short len;            // Datagram length
+    u_short crc;            // Checksum
+}udp_header;
+
+/* prototype of the packet handler */
+void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data);
+
+/*char* concat(const char *s1, const char *s2)
+{
+    char *result = malloc(strlen(s1)+strlen(s2)+1);//+1 for the null-terminator
+    //in real code you would check for errors in malloc here
+    strcpy(result, s1);
+    strcat(result, s2);
+    return result;
+}*/
+FILE *cha1;
+FILE *cha2;
+main()
+{
+   system("COLOR F1");
+
+    //char *file="cap_filt.pcap";
+pcap_if_t *alldevs;
+pcap_if_t *d;
+int inum;
+int i=0;
+pcap_t *adhandle;
+char errbuf[PCAP_ERRBUF_SIZE];
+
+u_int netmask;
+char packet_filter[] = "ip and udp and port 5021  and src 200.1.1.177";
+//char packet_filter[] = "ip and udp";
+
+struct bpf_program fcode;
+pcap_dumper_t *dumpfile;
+  //time_t now;
+    FILE *stream;
+
+
+     time_t now ;
+ struct tm *now_tm;
+int hour;
+int min;
+int sec;
+
+now = time(NULL);
+now_tm = localtime(&now);
+hour = now_tm->tm_hour;
+ min=now_tm->tm_min;
+ sec=now_tm->tm_sec;
+//printf("TIME %d:%d:%d \n\n", hour, min, sec);
+
+
+    /* le liste  de devices */
+    if (pcap_findalldevs(&alldevs, errbuf) == -1)
+    {
+        fprintf(stderr,"Erreur pcap_findalldevs: %s\n", errbuf);
+        exit(1);
+    }
+
+    /* aficher la liste */
+    for(d=alldevs; d; d=d->next)
+    {
+        printf("%d. %s", ++i, d->name);
+        if (d->description)
+            printf(" (%s)\n", d->description);
+        else
+            printf(" (Pas de description)\n");
+    }
+
+    if(i==0)
+    {
+        printf("\naucun interface trouvé! WinPcap n'est pas installée.\n");
+        return -1;
+    }
+
+    printf("Enter le nombre de p%criph%crique(1-%d):",130, 130,i);
+   int converted= scanf("%d", &inum);
+
+
+    if( converted == 0)
+{
+    printf("Enter un nombre de type entier\n\n");
+    system("PAUSE \n");
+
+}
+    if(inum < 1 || inum > i)
+    {
+        printf("\nNum%cro d'interface hors de portée.\n",130);
+        /* Free the device list */
+        pcap_freealldevs(alldevs);
+        return -1;
+    }
+
+    /* Jump to the selected adapter */
+    for(d=alldevs, i=0; i< inum-1 ;d=d->next, i++);
+
+    /* Open the adapter */
+    if ( (adhandle= pcap_open_live(d->name,  // nom de device
+                             65536,     // nbr max de paquet a capturer
+
+                            // PCAP_OPENFLAG_PROMISCUOUS,
+                            1,       // promiscuous mode
+                             1000,      // délais de lecture
+                            //NULL,      // remote authentication
+                             errbuf     // error buffer
+                             ) ) == NULL)
+    {
+        fprintf(stderr,"\nImpossible d'ouvrir l'adaptateur. % s n'est pas support%c par WinPcap\n",130);
+        /* Free the device list */
+        pcap_freealldevs(alldevs);
+        return -1;
+    }
+
+    /* Check the link layer. We support only Ethernet  */
+    if(pcap_datalink(adhandle) != DLT_EN10MB)
+    {
+        fprintf(stderr,"\nCe programme ne fonctionne que sur les r%cseaux Ethernet.\n",130);
+        /* Free the device list */
+        pcap_freealldevs(alldevs);
+        return -1;
+    }
+
+    if(d->addresses != NULL)
+        /* Retrieve the mask of the first address of the interface */
+        netmask=((struct sockaddr_in *)(d->addresses->netmask))->sin_addr.S_un.S_addr;
+    else
+        /* If the interface is without addresses we suppose to be in a C class network */
+        netmask=0xffffff;
+
+
+    //compiler le filter
+    if (pcap_compile(adhandle, &fcode, packet_filter, 1, netmask) <0 )
+    {
+        fprintf(stderr,"\nImpossible de compiler le filtre de paquets. Vérifiez la syntaxe.\n");
+        /* Free the device list */
+        pcap_freealldevs(alldevs);
+        return -1;
+    }
+
+    //set the filter
+    if (pcap_setfilter(adhandle, &fcode)<0)
+    {
+        fprintf(stderr,"\nErreur lors de la d%cfinition du filtre.\n",130);
+        /* Free the device list */
+        pcap_freealldevs(alldevs);
+        return -1;
+    }
+
+    printf("\n*******************************************************************\n");
+
+//_______________________________________________________________________________________________
+//while (1){
+
+     /* Open the dump file */
+      /* Time Function for filename definition */
+LOOP:
+time_t nowe ;
+
+  time(&nowe);
+      char* path="archives_radar//";
+  struct tm *t = localtime(&nowe);
+    char date_time[30];
+
+    strftime( date_time, sizeof(date_time), "capt_filter_%d_%m_20%y.pcap",t);
+       printf ("LE NOM DE FICHIER :  %s\n\n", date_time);
+        char * datetime2 = (char *) malloc(1 + strlen(path)+ strlen(date_time) );
+        strcpy(datetime2, path);
+      strcat(datetime2, date_time);
+     // printf("%s \n\n", datetime2);
+     //stream = fopen(datetime2, "w");
+
+
+
+
+                dumpfile = pcap_dump_open(adhandle, datetime2);
+
+
+
+
+
+
+    if(dumpfile==NULL)
+    {
+        fprintf(stderr,"\nErreur d'ouverture du fichier de sortie\n");
+        return -1;
+    }
+
+//______________________________________________________________________________________________________
+
+    printf("\nEcoute sur %s...\n", d->description);
+
+    /* At this point, we don't need any more the device list. Free it */
+    pcap_freealldevs(alldevs);
+    printf("\n*******************************************************************\n");
+
+    /* start the capture */
+//while (hour!=0 && min !=0){
+
+   pcap_loop(adhandle, 0, packet_handler, (unsigned char *)dumpfile);
+   if((hour == 0 && min==0 && sec==00)){
+
+      goto LOOP;
+
+
+ }
+
+//system ("CLS");}
+
+
+
+    return 0;
+}
+
+/* Callback function invoked by libpcap for every incoming packet */
+
+void packet_handler(u_char *dumpfile, const struct pcap_pkthdr *header, const u_char *pkt_data)
+{
+   FILE *fichier=fopen("..//end//Alarmes.txt","a+");
+   cha1=fopen("..//end//ch1.txt","a+");
+      cha2=fopen("..//end//ch2.txt","a+");
+
+
+
+    struct tm *ltime;
+    char timestr[16];
+    ip_header *ih;
+    udp_header *uh;
+    u_int ip_len;
+    u_short sport,dport;
+    time_t local_tv_sec;
+    //_____________________________
+      time_t now ;
+ struct tm *now_tm;
+int day;
+int mon;
+int year;
+int hour;
+int min;
+int sec;
+now = time(NULL);
+now_tm = localtime(&now);
+day = now_tm->tm_mday;
+ mon=now_tm->tm_mon+1;
+ year=now_tm->tm_year+1900;
+ hour = now_tm->tm_hour;
+ min=now_tm->tm_min;
+ sec=now_tm->tm_sec;
+
+    /* convert the timestamp to readable format */
+    local_tv_sec = header->ts.tv_sec;
+    ltime=localtime(&local_tv_sec);
+    strftime( timestr, sizeof timestr, "%H:%M:%S", ltime);
+
+    /* print timestamp and length of the packet */
+   // printf("time: %s.%.6d  len:%d ", timestr, header->ts.tv_usec, header->len);
+
+    /* retireve the position of the ip header */
+    ih = (ip_header *) (pkt_data +
+        14); //length of ethernet header
+
+    /* retireve the position of the udp header */
+    ip_len = (ih->ver_ihl & 0xf) * 4;
+    uh = (udp_header *) ((u_char*)ih + ip_len);
+
+    /* convert from network byte order to host byte order */
+    sport = ntohs( uh->sport );
+    dport = ntohs( uh->dport );
+
+    /* afficher ip addresses and udp ports */
+  /*
+ printf("src: %d.%d.%d.%d.%d -> des: %d.%d.%d.%d.%d\n",
+        ih->saddr.byte1,
+        ih->saddr.byte2,
+        ih->saddr.byte3,
+        ih->saddr.byte4,
+        sport,
+        ih->daddr.byte1,
+        ih->daddr.byte2,
+        ih->daddr.byte3,
+        ih->daddr.byte4,
+        dport);
+       /* for (int i=1; (i < header->caplen + 1 ) ; i++)
+	{
+		printf("%.2x ", pkt_data[i-1]);
+		//if ( (i % LINE_LEN) == 0);
+
+	}printf("\n\n***************************************************************************\n\n");
+        /* save the packet on the dump file */
+        if (ih->saddr.byte1==200 && ih->saddr.byte2==1 && ih->saddr.byte3==1 &&ih->saddr.byte4==49  )//pour chaA
+                            {
+         
+   else
+        {
+           printf("TLS\t");
+       if(((pkt_data[52]+pkt_data[53]*256))==0){
+                printf("aucune alarme détéctée dans SSR_A\t"); }
+                    else {
+
+
+                     fprintf(fichier, "\n Date %d_%d_%d Time %d:%d:%d %d Alarme détectées dans SSR_A",day, mon, year, hour, min, sec,pkt_data[52]+pkt_data[53]*256);
+                     fprintf(cha1, "\n Date %d_%d_%d Time %d:%d:%d %d@Alarme@détectées@",day, mon, year, hour, min, sec,pkt_data[52]+pkt_data[53]*256);
+
+                        for(int i=(pkt_data[52]+pkt_data[53]*256); i>0; i--){
+                            printf("il reste %d alarme(s)", i);
+                            if(pkt_data[54]==01 && pkt_data[55]==00 )
+                            {
+                               fprintf(fichier, "%d:%d:%d CODE 100 : Power failure\n",hour, min, sec);
+                               fprintf(cha1, "%d:%d:%d CODE 100 : Power failure\n",hour, min, sec);
+
+
+                                                          }
+
+                            if(pkt_data[54]==02 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 200 : +5V d.c. power supply failure in the other channel");
+                                 fprintf(fichier, "%d:%d:%d CODE 200 : +5V d.c. power supply failure in the other channel\n",hour, min, sec);
+                                 fprintf(cha1, "%d:%d:%d CODE 200 : +5V d.c. power supply failure in the other channel\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==03 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 300 : External trigger absent");
+                                fprintf(fichier, "%d:%d:%d CODE 300 : External trigger absent\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 300 : External trigger absent\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==04 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 400 : Fan fault");
+                                fprintf(fichier, "%d:%d:%d CODE 400 : Fan fault\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 400 : Fan fault\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==05&& pkt_data[55]==00 )
+                            {
+                                printf("CODE 500 : Extractor blower alarm");
+                                fprintf(fichier, "%d:%d:%d CODE 500 : Extractor blower alarm\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 500 : Extractor blower alarm\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==07 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 700 : The antenna is off");
+                                fprintf(fichier, "%d:%d:%d CODE 700 : The antenna is off\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 700 : The antenna is off\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]== 8 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 800 : Problem with ACP");
+                                fprintf(fichier, "%d:%d:%d CODE 800 : Problem with ACP\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 800 : Problem with ACP\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]== 9 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 900 : Problem with NORTH");
+                                fprintf(fichier, "%d:%d:%d CODE 900 : Problem with NORTH\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 900 : Problem with NORTH\n",hour, min, sec);
+                            }
+                           if(pkt_data[54]== 10 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 1000 : Power supply failure");
+                               ChilkatSample();
+                            }
+                            if(pkt_data[54]==21 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2100 : PRM fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2100 : PRM fault - off line\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 2100 : PRM fault - off line\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==22 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2200 : DPM fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2200 : DPM fault - off line\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 2200 : DPM fault - off line\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==24 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2400 : MNI fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2400 : MNI fault - off line\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 2400 : MNI fault - off line\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==25 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2500 : SPI fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2500 : SPI fault - off line\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 2500 : SPI fault - off line\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==26 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2600 : RPD fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2600 : RPD fault - off line\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 2600 : RPD fault - off line\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==28  && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2800 : ASU fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2800 : ASU fault - off line\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 2800 : ASU fault - off line\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==29 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2900 : PTG fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2900 : PTG fault - off line\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 2900 : PTG fault - off line\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==35 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 3500 : SIF test target miss detection");
+                                fprintf(fichier, "%d:%d:%d CODE 3500 : SIF test target miss detection\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 3500 : SIF test target miss detection\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==37 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 3700 : Test transponder plot miss detection");
+                                fprintf(fichier, "%d:%d:%d CODE 3700 : Test transponder plot miss detection\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 3700 : Test transponder plot miss detection\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==38 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 3800 : RMS value of test transponder azimuth error: too large");
+                                fprintf(fichier, "%d:%d:%d CODE 3800 : RMS value of test transponder azimuth error: too large\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 3800 : RMS value of test transponder azimuth error: too large\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==39 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 3900 : RMS value of test transponder rage error: too large");
+                                fprintf(fichier, "%d:%d:%d CODE 3900 : RMS value of test transponder rage error: too large\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 3900 : RMS value of test transponder rage error: too large\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==40 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4000 : Problem with PRI");
+                                fprintf(fichier, "%d:%d:%d CODE 4000 : Problem with PRI\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 4000 : Problem with PRI\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==41 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4100 : Problem with interrupts");
+                                fprintf(fichier, "%d:%d:%d CODE 4100 : Problem with interrupts\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 4100 : Problem with interrupts\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==42 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4200 : CO-PROCESSOR unavailable");
+                                fprintf(fichier, "%d:%d:%d CODE 4200 : CO-PROCESSOR unavailable\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 4200 : CO-PROCESSOR unavailable\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==43 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4300 : Problems with RPD board");
+                                fprintf(fichier, "%d:%d:%d CODE 4300 : Problems with RPD board\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 4300 : Problems with RPD board\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==44 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4400 : Timing malfunction");
+                                fprintf(fichier, "%d:%d:%d CODE 4400 : Timing malfunction\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 4400 : Timing malfunction\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==45 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4500 : MTL problems");
+                                ChilkatSample();
+                                fprintf(fichier, "%d:%d:%d CODE 4500 : MTL problems\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 4500 : MTL problems\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==46 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4600 : Excessive SIF replies");
+                                fprintf(fichier, "%d:%d:%d CODE 4600 : Excessive SIF replies\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 4600 : Excessive SIF replies\n",hour, min, sec);
+                            }
+
+
+
+                            if(pkt_data[54]==48 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4800 : SIF reply buffer saturation");
+                                fprintf(fichier, "%d:%d:%d CODE 4800 : SIF reply buffer saturation\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 4800 : SIF reply buffer saturation\n",hour, min, sec);
+                            }
+
+
+                            if(pkt_data[54]==50 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5000 : Too many SIF plots in extraction");
+                                fprintf(fichier, "%d:%d:%d CODE 5000 : Too many SIF plots in extraction\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 5000 : Too many SIF plots in extraction\n",hour, min, sec);
+                            }
+
+
+                            if(pkt_data[54]==52 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5200 : Too many SIF plots");
+                                fprintf(fichier, "%d:%d:%d CODE 5200 : Too many SIF plots\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 5200 : Too many SIF plots\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==54 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5400 : Too many SIF fruits");
+                                fprintf(fichier, "%d:%d:%d CODE 5400 : Too many SIF fruits\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 5400 : Too many SIF fruits\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==55 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5500 : RX serial line error");
+                                fprintf(fichier, "%d:%d:%d CODE 5500 : RX serial line error\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 5500 : RX serial line error\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==56 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5600 : RX serial line error");
+                                fprintf(fichier, "%d:%d:%d CODE 5600 : RX serial line error\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 5600 : RX serial line error\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==57 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5700 : PTG full");
+                                fprintf(fichier, "%d:%d:%d CODE 5700 : PTG full\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 5700 : PTG full\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==58 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5800 : Fifo on RPD board half full");
+                                fprintf(fichier, "%d:%d:%d CODE 5800 : Fifo on RPD board half full\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 5800 : Fifo on RPD board half full\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==59 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5900 : Wrong count end");
+                                fprintf(fichier, "%d:%d:%d CODE 5900 : Wrong count end\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 5900 : Wrong count end\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==61 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6100 : High duty");
+                                ChilkatSample();
+                                fprintf(fichier, "%d:%d:%d CODE 6100 : High duty\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 6100 : High duty\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==62 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6200 : TX driver alarm");
+                                ChilkatSample();
+                                fprintf(fichier, "%d:%d:%d CODE 6200 : TX driver alarm\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 6200 : TX driver alarm\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==64 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6400 : PD DIR &lt; PD DIR Sl");
+                                ChilkatSample();
+                                fprintf(fichier, "%d:%d:%d CODE 6400 : PD DIR &lt; PD DIR Sl\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 6400 : PD DIR &lt; PD DIR Sl\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==65 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6500 : VSWR DIR &gt; VSWR DIR S");
+                                ChilkatSample();
+                                fprintf(fichier, "%d:%d:%d CODE 6500 : VSWR DIR &gt; VSWR DIR S\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 6500 : VSWR DIR &gt; VSWR DIR S\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==66 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6600 : VSWR OMNI &gt; VSWR OMNI S");
+                                ChilkatSample();
+                                fprintf(fichier, "%d:%d:%d CODE 6600 : VSWR OMNI &gt; VSWR OMNI S\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 6600 : VSWR OMNI &gt; VSWR OMNI S\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==67 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6700 : PD DIR &lt; PD DIR S2");
+                                fprintf(fichier, "%d:%d:%d CODE 6700 : PD DIR &lt; PD DIR S2\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 6700 : PD DIR &lt; PD DIR S2\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==68 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6800 : PD OMNI &lt; PD OMNI S2");
+                                fprintf(fichier, "%d:%d:%d CODE 6800 : PD OMNI &lt; PD OMNI S2\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 6800 : PD OMNI &lt; PD OMNI S2\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==69 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6900 : PD OMNI &lt; PD OMNI S 1");
+                                fprintf(fichier, "%d:%d:%d CODE 6900 : PD OMNI &lt; PD OMNI S 1\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 6900 : PD OMNI &lt; PD OMNI S 1\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==71 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 7100 : Sigma receiver channel failure");
+                                ChilkatSample();
+                                fprintf(fichier, "%d:%d:%d CODE 7100 : Sigma receiver channel failure\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 7100 : Sigma receiver channel failure\n",hour, min, sec);
+                            }
+
+
+                             if(pkt_data[54]==72 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 7200 : Delta receiver failure");
+                                fprintf(fichier, "%d:%d:%d CODE 7200 : Delta receiver failure\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 7200 : Delta receiver failure\n",hour, min, sec);
+                            }
+
+                             if(pkt_data[54]==73 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 7300 : Omni receiver channel failure");
+                                fprintf(fichier, "%d:%d:%d CODE 7300 : Omni receiver channel failure\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 7300 : Omni receiver channel failure\n",hour, min, sec);
+                            }
+
+                             if(pkt_data[54]==74 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 7400 : Phase receiver error");
+                                fprintf(fichier, "%d:%d:%d CODE 7400 : Phase receiver error\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 7400 : Phase receiver error\n",hour, min, sec);
+                            }
+
+                             if(pkt_data[54]==75 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 7500 : SLS gate alarm");
+                                fprintf(fichier, "%d:%d:%d CODE 7500 : SLS gate alarm\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 7500 : SLS gate alarm\n",hour, min, sec);
+                            }
+                            if(pkt_data[54]==81 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 8100 : Mode 4 ZEROIZE code alarm");
+                               ChilkatSample();
+                            }
+                            if(pkt_data[54]==85 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 8500 : Lack of Mode 4 test plot");
+                               ChilkatSample();
+                            }
+                             if(pkt_data[54]==91 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 9100 : LAN 1 message unknown");
+                                fprintf(fichier, "%d:%d:%d CODE 9100 : LAN 1 message unknown\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 9100 : LAN 1 message unknown\n",hour, min, sec);
+                            }
+
+                             if(pkt_data[54]==92 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 9200 : LAN I live message missing");
+                                fprintf(fichier, "%d:%d:%d CODE 9200 : LAN I live message missing\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 9200 : LAN I live message missing\n",hour, min, sec);
+                            }
+
+                             if(pkt_data[54]==93 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 9300 : LAN 1/2 queue in saturation");
+                                fprintf(fichier, "%d:%d:%d CODE 9300 : LAN 1/2 queue in saturation\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 9300 : LAN 1/2 queue in saturation\n",hour, min, sec);
+                            }
+
+
+                             if(pkt_data[54]==94 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 900 : LAN 1/2 queue out saturation");
+                                fprintf(fichier, "%d:%d:%d CODE 900 : LAN 1/2 queue out saturation\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 900 : LAN 1/2 queue out saturation\n",hour, min, sec);
+                            }
+
+                             if(pkt_data[54]==95 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 9500 : LAN 2 message unknown");
+                                fprintf(fichier, "%d:%d:%d CODE 9500 : LAN 2 message unknown\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 9500 : LAN 2 message unknown\n",hour, min, sec);
+                            }
+
+                             if(pkt_data[54]==96 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 9600 : LAN 2 live message missing");
+                                fprintf(fichier, "%d:%d:%d CODE 9600 : LAN 2 live message missing\n",hour, min, sec);
+                                fprintf(cha1, "%d:%d:%d CODE 9600 : LAN 2 live message missing\n",hour, min, sec);
+                            }
+
+                       }
+                    }
+
+
+                     // if(pkt_data[52]==0){printf("pas d'alarme\t\n"); }
+                  /*  else {
+                        for(int i=pkt_data[52]; i>0; i--){
+                            printf("rest %d alarmes", i);
+
+                        }*/
+                  }
+
+        }
+                  //pour chaB
+                  else
+                     if (ih->saddr.byte1==200 && ih->saddr.byte2==1 && ih->saddr.byte3==1 &&ih->saddr.byte4==177 )//pour chaA
+                            {
+                                    printf("time: %s.%.6d  len:%d ", timestr, header->ts.tv_usec, header->len);
+
+         if (pkt_data[51]!=5){
+
+
+                printf("pas de tls dans SSR_B\n");
+               /* fprintf(fichier, "Pas tls dans SSR_B\n");
+                fprintf(cha2, "%d@Pas@tls@",pkt_data[52]+pkt_data[53]*256);*/
+        // return(0);
+                          }
+
+   else
+        {
+
+       if(((pkt_data[52]+pkt_data[53]*256))==0){
+                printf("TLS mais aucune alarme détéctée dans SSR_B\t"); }
+                    else
+                   {
+
+
+                     fprintf(fichier, "\n Date %d_%d_%d Time %d:%d:%d %d Alarme détectées dans SSR_B",day, mon, year, hour, min, sec,pkt_data[52]+pkt_data[53]*256);
+                     fprintf(cha2, "\n Date %d_%d_%d Time %d:%d:%d %d@Alarme@détectées@ dans SSR_B",day, mon, year, hour, min, sec,pkt_data[52]+pkt_data[53]*256);                             }
+
+                        for(int i=(pkt_data[52]+pkt_data[53]*256); i>0; i--){
+                            printf("il reste %d alarme(s)", i);
+                            if(pkt_data[54]==01 && pkt_data[55]==00 )
+                            {
+                               fprintf(fichier, "%d:%d:%d CODE 100 : Power failure\n",hour, min, sec);
+                               fprintf(cha2, "%d:%d:%d CODE 100 : Power failure\n",hour, min, sec);
+
+
+                                                          }
+
+                            if(pkt_data[54]==02 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 200 : +5V d.c. power supply failure in the other channel");
+                                 fprintf(fichier, "%d:%d:%d CODE 200 : +5V d.c. power supply failure in the other channel\n",hour, min, sec);
+                                 fprintf(cha2, "%d:%d:%d CODE 200 : +5V d.c. power supply failure in the other channel\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==03 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 300 : External trigger absent");
+                                fprintf(fichier, "%d:%d:%d CODE 300 : External trigger absent\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 300 : External trigger absent\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==04 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 400 : Fan fault");
+                                fprintf(fichier, "%d:%d:%d CODE 400 : Fan fault\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 400 : Fan fault\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==05&& pkt_data[55]==00 )
+                            {
+                                printf("CODE 500 : Extractor blower alarm");
+                                fprintf(fichier, "%d:%d:%d CODE 500 : Extractor blower alarm\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 500 : Extractor blower alarm\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==07 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 700 : The antenna is off");
+                                fprintf(fichier, "%d:%d:%d CODE 700 : The antenna is off\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 700 : The antenna is off\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]== 8 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 800 : Problem with ACP");
+                                fprintf(fichier, "%d:%d:%d CODE 800 : Problem with ACP\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 800 : Problem with ACP\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]== 9 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 900 : Problem with NORTH");
+                                fprintf(fichier, "%d:%d:%d CODE 900 : Problem with NORTH\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 900 : Problem with NORTH\n",hour, min, sec);
+                            }
+                            if(pkt_data[54]== 10 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 1000 : Power supply failure");
+                               ChilkatSample();
+                            }
+
+                            if(pkt_data[54]==21 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2100 : PRM fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2100 : PRM fault - off line\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 2100 : PRM fault - off line\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==22 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2200 : DPM fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2200 : DPM fault - off line\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 2200 : DPM fault - off line\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==24 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2400 : MNI fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2400 : MNI fault - off line\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 2400 : MNI fault - off line\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==25 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2500 : SPI fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2500 : SPI fault - off line\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 2500 : SPI fault - off line\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==26 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2600 : RPD fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2600 : RPD fault - off line\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 2600 : RPD fault - off line\n",hour, min, sec);
+
+                            }
+
+                            if(pkt_data[54]==28  && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2800 : ASU fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2800 : ASU fault - off line\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 2800 : ASU fault - off line\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==29 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 2900 : PTG fault - off line");
+                                fprintf(fichier, "%d:%d:%d CODE 2900 : PTG fault - off line\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 2900 : PTG fault - off line\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==35 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 3500 : SIF test target miss detection");
+                                fprintf(fichier, "%d:%d:%d CODE 3500 : SIF test target miss detection\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 3500 : SIF test target miss detection\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==37 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 3700 : Test transponder plot miss detection");
+                                fprintf(fichier, "%d:%d:%d CODE 3700 : Test transponder plot miss detection\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 3700 : Test transponder plot miss detection\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==38 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 3800 : RMS value of test transponder azimuth error: too large");
+                                fprintf(fichier, "%d:%d:%d CODE 3800 : RMS value of test transponder azimuth error: too large\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 3800 : RMS value of test transponder azimuth error: too large\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==39 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 3900 : RMS value of test transponder rage error: too large");
+                                fprintf(fichier, "%d:%d:%d CODE 3900 : RMS value of test transponder rage error: too large\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 3900 : RMS value of test transponder rage error: too large\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==40 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4000 : Problem with PRI");
+                                fprintf(fichier, "%d:%d:%d CODE 4000 : Problem with PRI\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 4000 : Problem with PRI\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==41 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4100 : Problem with interrupts");
+                                fprintf(fichier, "%d:%d:%d CODE 4100 : Problem with interrupts\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 4100 : Problem with interrupts\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==42 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4200 : CO-PROCESSOR unavailable");
+                                fprintf(fichier, "%d:%d:%d CODE 4200 : CO-PROCESSOR unavailable\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 4200 : CO-PROCESSOR unavailable\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==43 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4300 : Problems with RPD board");
+                                fprintf(fichier, "%d:%d:%d CODE 4300 : Problems with RPD board\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 4300 : Problems with RPD board\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==44 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4400 : Timing malfunction");
+                                ChilkatSample();
+                                fprintf(fichier, "%d:%d:%d CODE 4400 : Timing malfunction\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 4400 : Timing malfunction\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==45 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4500 : MTL problems");
+                                fprintf(fichier, "%d:%d:%d CODE 4500 : MTL problems\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 4500 : MTL problems\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==46 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4600 : Excessive SIF replies");
+                                fprintf(fichier, "%d:%d:%d CODE 4600 : Excessive SIF replies\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 4600 : Excessive SIF replies\n",hour, min, sec);
+                            }
+
+
+
+                            if(pkt_data[54]==48 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 4800 : SIF reply buffer saturation");
+                                fprintf(fichier, "%d:%d:%d CODE 4800 : SIF reply buffer saturation\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 4800 : SIF reply buffer saturation\n",hour, min, sec);
+                            }
+
+
+                            if(pkt_data[54]==50 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5000 : Too many SIF plots in extraction");
+                                fprintf(fichier, "%d:%d:%d CODE 5000 : Too many SIF plots in extraction\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 5000 : Too many SIF plots in extraction\n",hour, min, sec);
+                            }
+
+
+                            if(pkt_data[54]==52 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5200 : Too many SIF plots");
+                                fprintf(fichier, "%d:%d:%d CODE 5200 : Too many SIF plots\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 5200 : Too many SIF plots\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==54 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5400 : Too many SIF fruits");
+                                fprintf(fichier, "%d:%d:%d CODE 5400 : Too many SIF fruits\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 5400 : Too many SIF fruits\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==55 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5500 : RX serial line error");
+                                fprintf(fichier, "%d:%d:%d CODE 5500 : RX serial line error\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 5500 : RX serial line error\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==56 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5600 : RX serial line error");
+                                fprintf(fichier, "%d:%d:%d CODE 5600 : RX serial line error\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 5600 : RX serial line error\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==57 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5700 : PTG full");
+                                fprintf(fichier, "%d:%d:%d CODE 5700 : PTG full\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 5700 : PTG full\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==58 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5800 : Fifo on RPD board half full");
+                                fprintf(fichier, "%d:%d:%d CODE 5800 : Fifo on RPD board half full\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 5800 : Fifo on RPD board half full\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==59 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 5900 : Wrong count end");
+                                fprintf(fichier, "%d:%d:%d CODE 5900 : Wrong count end\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 5900 : Wrong count end\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==61 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6100 : High duty");
+                                ChilkatSample();
+                                fprintf(fichier, "%d:%d:%d CODE 6100 : High duty\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 6100 : High duty\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==62 && pkt_data[55]==00 )
+                            {
+                                ChilkatSample();
+                                printf("CODE 6200 : TX driver alarm");
+                                fprintf(fichier, "%d:%d:%d CODE 6200 : TX driver alarm\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 6200 : TX driver alarm\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==64 && pkt_data[55]==00 )
+                            {
+                                ChilkatSample();
+                                printf("CODE 6400 : PD DIR &lt; PD DIR Sl");
+                                fprintf(fichier, "%d:%d:%d CODE 6400 : PD DIR &lt; PD DIR Sl\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 6400 : PD DIR &lt; PD DIR Sl\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==65 && pkt_data[55]==00 )
+                            {
+                                ChilkatSample();
+                                printf("CODE 6500 : VSWR DIR &gt; VSWR DIR S");
+                                fprintf(fichier, "%d:%d:%d CODE 6500 : VSWR DIR &gt; VSWR DIR S\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 6500 : VSWR DIR &gt; VSWR DIR S\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==66 && pkt_data[55]==00 )
+                            {
+                                ChilkatSample();
+                                printf("CODE 6600 : VSWR OMNI &gt; VSWR OMNI S");
+                                fprintf(fichier, "%d:%d:%d CODE 6600 : VSWR OMNI &gt; VSWR OMNI S\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 6600 : VSWR OMNI &gt; VSWR OMNI S\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==67 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6700 : PD DIR &lt; PD DIR S2");
+                                fprintf(fichier, "%d:%d:%d CODE 6700 : PD DIR &lt; PD DIR S2\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 6700 : PD DIR &lt; PD DIR S2\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==68 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6800 : PD OMNI &lt; PD OMNI S2");
+                                fprintf(fichier, "%d:%d:%d CODE 6800 : PD OMNI &lt; PD OMNI S2\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 6800 : PD OMNI &lt; PD OMNI S2\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==69 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 6900 : PD OMNI &lt; PD OMNI S 1");
+                                fprintf(fichier, "%d:%d:%d CODE 6900 : PD OMNI &lt; PD OMNI S 1\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 6900 : PD OMNI &lt; PD OMNI S 1\n",hour, min, sec);
+                            }
+
+                            if(pkt_data[54]==71 && pkt_data[55]==00 )
+                            {
+                                ChilkatSample();
+                                printf("CODE 7100 : Sigma receiver channel failure");
+                                fprintf(fichier, "%d:%d:%d CODE 7100 : Sigma receiver channel failure\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 7100 : Sigma receiver channel failure\n",hour, min, sec);
+                            }
+
+
+                             if(pkt_data[54]==72 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 7200 : Delta receiver failure");
+                                fprintf(fichier, "%d:%d:%d CODE 7200 : Delta receiver failure\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 7200 : Delta receiver failure\n",hour, min, sec);
+                            }
+
+                             if(pkt_data[54]==73 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 7300 : Omni receiver channel failure");
+                                fprintf(fichier, "%d:%d:%d CODE 7300 : Omni receiver channel failure\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 7300 : Omni receiver channel failure\n",hour, min, sec);
+                            }
+
+                             if(pkt_data[54]==74 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 7400 : Phase receiver error");
+                                fprintf(fichier, "%d:%d:%d CODE 7400 : Phase receiver error\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 7400 : Phase receiver error\n",hour, min, sec);
+                            }
+
+                             if(pkt_data[54]==75 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 7500 : SLS gate alarm");
+                                fprintf(fichier, "%d:%d:%d CODE 7500 : SLS gate alarm\n",hour, min, sec);
+                                fprintf(cha2, "%d:%d:%d CODE 7500 : SLS gate alarm\n",hour, min, sec);
+                            }
+                                                        if(pkt_data[54]==81 && pkt_data[55]==00 )
+                            {
+                                printf("CODE 8100 : Mode 4 ZEROIZE code alarm");
+                               ChilkatSample();
+                            }
+                         
+
+                       }
+                    }
+
+
+
+                  }
+
+//  } }
+    // printf("\n");
+    pcap_dump(dumpfile, header, pkt_data);}
+

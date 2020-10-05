@@ -1,0 +1,199 @@
+#include <CkMailMan.h>
+#include <CkEmail.h>
+#include <CkRsa.h>
+#include<iostream>
+#include <time.h>
+#include <stdio.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include <math.h>
+# define MAX_INPUT 100
+void ChilkatSample(void)
+    {
+    //  The mailman object is used for sending (SMTP) and receiving (POP3) email.
+    CkMailMan mailman;
+
+   bool success = mailman.UnlockComponent("SCOTTGMAILQ_ZpcR8r2N6R7a");
+    if (success != true) {
+        printf(mailman.lastErrorText() );
+        return;
+    }
+
+CkRsa rsa;
+ success = rsa.UnlockComponent("s/n: VIENTORSA_TbpfVVr01Or6");
+    if (success != true) {
+        printf("RSA component unlock failed \r\n");
+        return;
+    }
+    success = rsa.GenerateKey(1024);
+    if (success != true) {
+        printf(rsa.lastErrorText() ,"\r\n");
+        return;
+    }
+
+ //const char *publicKey = "<RSAPublicKey><Modulus>2qav2y5IxqjvyPQ+S3B4lRXvDIR4pI39uPx/wap+Z0Lm/CqN+8tAxcNjHPjra7Q5mt79uKSPdJjVMDt/ENRkGI3mwVjTSWFAk/9VwxDG5wF4yU13yAGJjUfjIJ27Hha65U966AYOdASSw4w6AU+DKo9VdisSdgj4yzl5m/CJRik=</Modulus><Exponent>AQAB</Exponent></RSAPublicKey>";
+    const char *privateKey = "<RSAKeyValue><Modulus>2qav2y5IxqjvyPQ+S3B4lRXvDIR4pI39uPx/wap+Z0Lm/CqN+8tAxcNjHPjra7Q5mt79uKSPdJjVMDt/ENRkGI3mwVjTSWFAk/9VwxDG5wF4yU13yAGJjUfjIJ27Hha65U966AYOdASSw4w6AU+DKo9VdisSdgj4yzl5m/CJRik=</Modulus><Exponent>AQAB</Exponent><D>WNKD99b6i3FPT2Qg9kZvRakOXhhmZfqkioRQZd0b0lj0OpYS7amo222/EqLwB+XDzO0vRtXazPPVDu3sdWrCahKI5/XuiGhDXGnNyp6octNBlsHlvkS4Pe4JrKuI9yYmCIGy/tt56PyClLB7mRSy3db4dmKqed1VNDq/YtrFooE=</D><P>+/OBoxDz+/N7bNexizRwwjcHZEvZhOg/K3qetnER4vz4NkFY+O4vPaZd9ju61U0gMyaFG5vp3fjR5pjtaIp6kQ==</P><Q>3iowP9sP4DY7nEULAfEHMpuxguTK7tdNCARcvJHrNZsIsE13uAxUrW03kHiXfy7VReuFsJODwYsZRv8NV0luGQ==</Q><DP>wMJAQF3MDMrvdwpejz4DttMbGKTfOkvlaIJbwwEmyh74V6oPRAQWqHgME0MHYgGrzPZ/h+v1NRoUnPQLTpwDwQ==</DP><DQ>M9XOGigHhT3CHMzzK4nMLx+qhCrTunRbkcJKzOiS45f/p/r7MuMVor032Kp6Vn9b3Yt9TtysQi0tQaZiu3nziQ==</DQ><InverseQ>17jYRnoDs/h5GM46kdkn84hvbmi9qHavAiVlj1tWgC7wHCGfXmuIWQgVKi2qDGo+CXtU3KpZ39R9eXZyyeo2kw==</InverseQ></RSAKeyValue>";
+
+
+    const char *plainText = "8ABF6F08A70962A4BBCA4ECC3516175F0100C449E139CA454197877271A03A6C557F1238B1BE11822B10C1D4935C0BF29BACBDB00B3C6BE32F6764D7D810B8C399CAB53ADB997237DAB0AD6A42ED3E6E7A18E45E270D3F54AE1C3B2CDF69B3A8DDCE5EBED68FC049EFF88BB2CAC9B4A5B29D6AA3755118CACC3942AB15A51A18";
+
+
+    CkRsa rsaDecryptor;
+  rsaDecryptor.put_EncodingMode("hex");
+    success = rsaDecryptor.ImportPrivateKey(privateKey);
+
+    bool usePrivateKey = true;
+    const char *decryptedStr = rsaDecryptor.decryptStringENC(plainText,usePrivateKey);
+    //  Set the SMTP server.
+    mailman.put_SmtpHost("smtp.gmail.com");
+
+    //  Set the SMTP login/password (if required)
+    mailman.put_SmtpUsername("tls.rrr.pfe@gmail.com");
+    mailman.put_SmtpPassword(decryptedStr);
+
+    //  Connect to SMTP port 465 using TLS.
+    mailman.put_SmtpSsl(true);
+    mailman.put_SmtpPort(465);
+
+    //  Create a new email object
+    CkEmail email;
+
+    email.put_Subject("TLS");
+    email.put_Body("<html><head><meta charset='utf-8'></heade><body><p >Salam<br>Voici le fichier de l'heure<br>bonne journée &#10084;<br>Cordialement.</p></body></html>");
+    email.put_From("FROM <ENNA>");
+    char a[100];
+    float n;
+
+    n=0;
+    printf("entrer le nombre des destinataires: ",&n);
+   int converted =scanf("%d",&n);
+
+    if( converted == 0)
+{
+    printf("enter un nombre de type entier\n\n");
+    system("PAUSE \n");
+
+}
+if(n<=0)
+
+{
+    printf("entrer un entier valide\n\n");
+    system("PAUSE \n");
+
+}
+    for (int i=0; i<n;i++){
+    printf("-%d Adresse destinataire: ",i+1, &a); scanf("%s",&a);
+   // printf("%s",a);
+    success = email.AddTo("%s",a);}
+
+
+    const char *contentType = email.addFileAttachment("Alarmes.txt");
+    if (email.get_LastMethodSuccess() != true) {
+            printf(contentType);
+        printf(email.lastErrorText() );
+        return;
+    }
+
+
+
+    
+    success = mailman.CloseSmtpConnection();
+    if (success != true) {
+        printf("La connection de serveur SMTP n'est pas bien ferm%Ce . \r\n", 130);
+    }
+
+    printf("e-mail envoy%C! \r\n",10) ;
+
+    }
+
+
+
+
+
+//________________________________________________________________________________________________________________//
+
+    int main(int argc, const char* argv[])
+{
+       system("COLOR F1");
+
+   /* FILE *test;
+test=fopen("fichiers\\ch1.txt","r");
+
+
+  if (test != NULL)  {
+        int r = 0;
+    r = fgetc(test);
+
+    if(r==EOF){
+printf("Impossible d'ouvrir ce programme \"pas de captures\" .\n\n");
+system("PAUSE");
+  }}*/
+
+   // getcahr();
+
+    time_t now ;
+ struct tm *now_tm;
+int day;
+int mon;
+int year;
+int hour;
+int min;
+int sec;
+now = time(NULL);
+now_tm = localtime(&now);
+day = now_tm->tm_mday;
+ mon=now_tm->tm_mon+1;
+ year=now_tm->tm_year+1900;
+ hour = now_tm->tm_hour;
+ min=now_tm->tm_min;
+ sec=now_tm->tm_sec;
+    while (1)
+    {
+        FILE *kiki;
+kiki=fopen("Alarmes.txt","a+");
+
+
+  if (kiki != NULL)  {
+
+
+     int ret = 0;
+    ret = fgetc(kiki);
+
+    if(ret==EOF)//cas fichier vide
+
+{ fclose(kiki);
+
+kiki=fopen("Alarmes.txt","a");
+
+    fprintf(kiki,"Date %d_%d_%d \n\nBonne-nouvelle, pas d'alarmes.\n\nheure de réception de fichier %d:%d:%d", day, mon, year, hour, min, sec);
+//printf("vide");
+fclose(kiki);
+    	ChilkatSample();
+    	time_t temps_act;
+    time(&temps_act);
+
+
+    kiki=fopen("Alarmes.txt","w");
+fclose(kiki);
+	sleep (5); //3599
+//system ("CLS");
+}
+else
+	{
+
+
+	    fclose(kiki);
+	    kiki=fopen("Alarmes.txt","a");
+fclose(kiki);
+	ChilkatSample();
+	time_t temps_act;
+    time(&temps_act);
+    kiki=fopen("Alarmes.txt","w");
+fclose(kiki);
+	sleep (5); //3599
+
+    }}
+    while(getchar() != '\n');getchar();
+	return 0;
+
+}
